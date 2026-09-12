@@ -137,8 +137,8 @@ Ensure you have the following installed locally:
 
 #### 1. Clone the Repository
 ```bash
-git clone https://github.com/your-username/hirely.git
-cd hirely
+git clone https://github.com/ammad-muhammad/Hirely---AI-powered-job-platform.git
+cd Hirely---AI-powered-job-platform
 ```
 
 #### 2. Backend Setup
@@ -257,11 +257,29 @@ Distributed under the **MIT License**. See [`LICENSE`](./LICENSE) for more infor
 
 ## ✉️ Author & Contact
 
-**Your Name / Developer Name**
-- **Portfolio:** [your-portfolio.com](https://your-portfolio.com)
-- **LinkedIn:** [linkedin.com/in/your-profile](https://linkedin.com/in/your-profile)
-- **GitHub:** [@your-github-username](https://github.com/your-github-username)
-- **Email:** [your.email@example.com](mailto:your.email@example.com)
+**Muhammad Ammad** — *Full-Stack AI & Web Application Developer*
+
+<p align="left">
+  <a href="https://www.linkedin.com/in/ammadm/" target="_blank">
+    <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn" />
+  </a>
+  <a href="https://github.com/ammad-muhammad" target="_blank">
+    <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" />
+  </a>
+  <a href="https://ammad-portfolio-wine.vercel.app/" target="_blank">
+    <img src="https://img.shields.io/badge/Portfolio-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Portfolio" />
+  </a>
+  <a href="mailto:official.muhammadammad@gmail.com">
+    <img src="https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white" alt="Email" />
+  </a>
+</p>
+
+| Channel | Link / Details |
+| :--- | :--- |
+| **💼 LinkedIn** | [linkedin.com/in/ammadm](https://www.linkedin.com/in/ammadm/) |
+| **🐙 GitHub** | [github.com/ammad-muhammad](https://github.com/ammad-muhammad) |
+| **🌐 Portfolio** | [ammad-portfolio-wine.vercel.app](https://ammad-portfolio-wine.vercel.app/) |
+| **📧 Email** | [official.muhammadammad@gmail.com](mailto:official.muhammadammad@gmail.com) |
 
 ---
 
