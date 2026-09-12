@@ -242,21 +242,23 @@ export const initiateGoogleAuth = (req: Request, res: Response, next: NextFuncti
 
 export const handleGoogleCallback = (req: Request, res: Response, next: NextFunction): void => {
   passport.authenticate('google', { session: false }, async (err: Error | null, user: any) => {
+    const frontendUrl = (config.frontendUrl || 'http://localhost:3000').trim().replace(/\/+$/, '');
+
     if (err || !user) {
       logger.error(`[Google OAuth Callback Error]: ${err ? err.message : 'No user returned from Google'}`);
-      return res.redirect(`${config.frontendUrl}/login?error=google_auth_failed`);
+      return res.redirect(`${frontendUrl}/login?error=google_auth_failed`);
     }
 
     try {
       const userId = user.id || user._id?.toString();
       if (!userId) {
         logger.error('[Google OAuth Callback Error]: User ID is undefined');
-        return res.redirect(`${config.frontendUrl}/login?error=google_auth_failed`);
+        return res.redirect(`${frontendUrl}/login?error=google_auth_failed`);
       }
 
       if (user.isSuspended) {
         return res.redirect(
-          `${config.frontendUrl}/login?error=account_suspended&reason=${encodeURIComponent(
+          `${frontendUrl}/login?error=account_suspended&reason=${encodeURIComponent(
             user.suspensionReason || 'Administrator policy violation'
           )}`
         );
@@ -271,7 +273,7 @@ export const handleGoogleCallback = (req: Request, res: Response, next: NextFunc
         });
 
         sendTokenCookie(res, tempToken);
-        return res.redirect(`${config.frontendUrl}/complete-signup`);
+        return res.redirect(`${frontendUrl}/complete-signup`);
       }
 
       // Case 2: Existing user with role already set
@@ -284,9 +286,9 @@ export const handleGoogleCallback = (req: Request, res: Response, next: NextFunc
       sendTokenCookie(res, token);
 
       if (user.role === 'admin') {
-        return res.redirect(`${config.frontendUrl}/admin/dashboard`);
+        return res.redirect(`${frontendUrl}/admin/dashboard`);
       }
-      return res.redirect(`${config.frontendUrl}/dashboard`);
+      return res.redirect(`${frontendUrl}/dashboard`);
     } catch (error) {
       next(error);
     }
