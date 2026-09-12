@@ -1,0 +1,46 @@
+import { Router } from 'express';
+import healthRouter from './health';
+import authRouter from './auth.routes';
+import companyRouter from './company.routes';
+import jobRouter from './job.routes';
+import applicationRouter from './application.routes';
+import chatRouter from './chat.routes';
+import aiRouter from './ai.routes';
+import jobSeekerProfileRouter from './jobSeekerProfile.routes';
+import savedJobRouter from './savedJob.routes';
+import skillTestRouter from './skillTest.routes';
+import verificationRouter from './verification.routes';
+import adminRouter from './admin.routes';
+import mockInterviewRouter from './mockInterview.routes';
+import chatAssistantRouter from './chatAssistant.routes';
+import settingsRouter from './settings.routes';
+import analyticsRouter from './analytics.routes';
+import resumeRouter from './resume.routes';
+import notificationRouter from './notification.routes';
+import autoApplyRouter from './autoApply.routes';
+import supportRouter from './support.routes';
+
+const apiRouter = Router();
+
+apiRouter.use('/', healthRouter);
+apiRouter.use('/auth', authRouter);
+apiRouter.use('/settings', settingsRouter);
+apiRouter.use('/companies/verification', verificationRouter);
+apiRouter.use('/companies', companyRouter);
+apiRouter.use('/jobs', jobRouter);
+apiRouter.use('/applications', applicationRouter);
+apiRouter.use('/analytics', analyticsRouter);
+apiRouter.use('/chats', chatRouter);
+apiRouter.use('/ai', aiRouter);
+apiRouter.use('/job-seeker-profile', jobSeekerProfileRouter);
+apiRouter.use('/saved-jobs', savedJobRouter);
+apiRouter.use('/skill-tests', skillTestRouter);
+apiRouter.use('/mock-interviews', mockInterviewRouter);
+apiRouter.use('/assistant', chatAssistantRouter);
+apiRouter.use('/admin', adminRouter);
+apiRouter.use('/resumes', resumeRouter);
+apiRouter.use('/notifications', notificationRouter);
+apiRouter.use('/auto-apply', autoApplyRouter);
+apiRouter.use('/support', supportRouter);
+
+export default apiRouter;

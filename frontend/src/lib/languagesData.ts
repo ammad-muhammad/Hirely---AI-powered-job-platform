@@ -1,0 +1,45 @@
+export interface LanguageOption {
+  code: string;
+  name: string;
+  nativeName?: string;
+}
+
+export const WORLD_LANGUAGES: LanguageOption[] = [
+  { code: 'en', name: 'English', nativeName: 'English' },
+  { code: 'ur', name: 'Urdu', nativeName: 'اردو' },
+  { code: 'pa', name: 'Punjabi', nativeName: 'ਪੰਜਾਬੀ / پنجابی' },
+  { code: 'ps', name: 'Pashto', nativeName: 'پښتـو' },
+  { code: 'sd', name: 'Sindhi', nativeName: 'سنڌي' },
+  { code: 'bal', name: 'Balochi', nativeName: 'بلوچی' },
+  { code: 'ar', name: 'Arabic', nativeName: 'العربية' },
+  { code: 'fr', name: 'French', nativeName: 'Français' },
+  { code: 'de', name: 'German', nativeName: 'Deutsch' },
+  { code: 'es', name: 'Spanish', nativeName: 'Español' },
+  { code: 'zh', name: 'Mandarin Chinese', nativeName: '中文' },
+  { code: 'ja', name: 'Japanese', nativeName: '日本語' },
+  { code: 'tr', name: 'Turkish', nativeName: 'Türkçe' },
+  { code: 'hi', name: 'Hindi', nativeName: 'हिन्दी' },
+  { code: 'bn', name: 'Bengali', nativeName: 'বাংলা' },
+  { code: 'ru', name: 'Russian', nativeName: 'Русский' },
+  { code: 'it', name: 'Italian', nativeName: 'Italiano' },
+  { code: 'pt', name: 'Portuguese', nativeName: 'Português' },
+  { code: 'ko', name: 'Korean', nativeName: '한국어' },
+  { code: 'nl', name: 'Dutch', nativeName: 'Nederlands' },
+  { code: 'pl', name: 'Polish', nativeName: 'Polski' },
+  { code: 'fa', name: 'Persian (Farsi)', nativeName: 'فارسی' },
+  { code: 'tl', name: 'Tagalog / Filipino', nativeName: 'Wikang Tagalog' },
+  { code: 'id', name: 'Indonesian', nativeName: 'Bahasa Indonesia' },
+  { code: 'ms', name: 'Malay', nativeName: 'Bahasa Melayu' },
+  { code: 'vi', name: 'Vietnamese', nativeName: 'Tiếng Việt' },
+  { code: 'th', name: 'Thai', nativeName: 'ไทย' },
+  { code: 'sv', name: 'Swedish', nativeName: 'Svenska' },
+  { code: 'no', name: 'Norwegian', nativeName: 'Norsk' },
+  { code: 'da', name: 'Danish', nativeName: 'Dansk' },
+  { code: 'fi', name: 'Finnish', nativeName: 'Suomi' },
+  { code: 'el', name: 'Greek', nativeName: 'Ελληνικά' },
+  { code: 'cs', name: 'Czech', nativeName: 'Čeština' },
+  { code: 'ro', name: 'Romanian', nativeName: 'Română' },
+  { code: 'hu', name: 'Hungarian', nativeName: 'Magyar' },
+  { code: 'sw', name: 'Swahili', nativeName: 'Kiswahili' },
+  { code: 'uk', name: 'Ukrainian', nativeName: 'Українська' },
+];

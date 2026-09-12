@@ -1,0 +1,145 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    color-scheme: light dark;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  body {
+    @apply bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100 font-sans antialiased selection:bg-zinc-800 selection:text-white dark:selection:bg-zinc-200 dark:selection:text-zinc-900;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Hide scrollbar globally across all browsers & elements (mouse wheel scroll remains 100% functional) */
+  *, *::before, *::after {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  /* Prevent outline border rings on mouse click for links and buttons */
+  a, button, [role="button"] {
+    -webkit-tap-highlight-color: transparent;
+  }
+  a:focus, button:focus, [role="button"]:focus {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  a:focus-visible, button:focus-visible, [role="button"]:focus-visible {
+    outline: 2px solid theme('colors.zinc.400') !important;
+    outline-offset: 2px;
+  }
+
+  ::-webkit-scrollbar {
+    display: none !important; /* Chrome, Safari, Opera */
+    width: 0 !important;
+    height: 0 !important;
+  }
+
+  /* Hide Chrome, Safari, Edge, Opera number input spinners */
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Hide Firefox number input spinners */
+  input[type=number] {
+    -moz-appearance: textfield;
+  }
+
+  /* Custom Clean Styling for Native Select Elements */
+  select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2371717A%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 0.65rem;
+    padding-right: 2.25rem;
+  }
+
+  select option {
+    @apply bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 py-2;
+  }
+}
+
+@layer components {
+  /* Tiptap Rich Text Editor Base Styling */
+  .ProseMirror {
+    outline: none;
+    min-height: 140px;
+  }
+
+  .ProseMirror p.is-editor-empty:first-child::before {
+    color: #a1a1aa;
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+  }
+
+  .ProseMirror p {
+    margin-bottom: 0.5rem;
+  }
+
+  .ProseMirror ul {
+    list-style-type: disc;
+    padding-left: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .ProseMirror ol {
+    list-style-type: decimal;
+    padding-left: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .ProseMirror h3 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-top: 0.75rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .ProseMirror blockquote {
+    border-left: 3px solid #71717a;
+    padding-left: 0.75rem;
+    font-style: italic;
+    margin-bottom: 0.5rem;
+  }
+}
+
+@layer utilities {
+  /* Hide scrollbar utility class */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none !important;  /* IE and Edge */
+    scrollbar-width: none !important;  /* Firefox */
+  }
+
+  /* Modal Scale & Fade Pop Entrance Animation */
+  @keyframes modalPop {
+    0% {
+      opacity: 0;
+      transform: scale(0.96) translateY(6px);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  .animate-modal-pop {
+    animation: modalPop 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+}
