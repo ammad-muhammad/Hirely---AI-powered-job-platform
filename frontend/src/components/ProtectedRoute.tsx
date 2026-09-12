@@ -14,14 +14,16 @@ export const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ childr
     if (!isLoading) {
       if (!user) {
         router.push('/login');
+      } else if (user.role === 'pending') {
+        router.push('/complete-signup');
       } else if (user.role === 'admin') {
         router.push('/admin/dashboard');
       }
     }
   }, [isLoading, user, router]);
 
-  // If user is already authenticated in memory, render children immediately (zero route lag)
-  if (user) {
+  // If user is already authenticated in memory with a finalized role, render children immediately
+  if (user && user.role !== 'pending') {
     return <>{children}</>;
   }
 

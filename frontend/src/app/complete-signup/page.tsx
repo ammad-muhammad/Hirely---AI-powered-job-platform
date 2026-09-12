@@ -14,10 +14,25 @@ import { cn } from '@/lib/utils';
 
 export default function CompleteSignupPage() {
   const router = useRouter();
-  const { user, refreshUser } = useAuth();
+  const { user, refreshUser, isLoading: isAuthLoading } = useAuth();
   const [selectedRole, setSelectedRole] = useState<'job_seeker' | 'employer'>('job_seeker');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+
+  // Redirect if user is not authenticated or already has a finalized role
+  React.useEffect(() => {
+    if (!isAuthLoading) {
+      if (!user) {
+        router.push('/login');
+      } else if (user.role !== 'pending') {
+        if (user.role === 'admin') {
+          router.push('/admin/dashboard');
+        } else {
+          router.push('/dashboard');
+        }
+      }
+    }
+  }, [user, isAuthLoading, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

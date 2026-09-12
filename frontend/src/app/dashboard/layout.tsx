@@ -21,7 +21,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   // If user is a Job Seeker, use the clean top-navigation JobSeekerShell
   if (!user || user.role === 'job_seeker') {
-    return <JobSeekerShell>{children}</JobSeekerShell>;
+    return (
+      <ProtectedRoute>
+        <JobSeekerShell>{children}</JobSeekerShell>
+      </ProtectedRoute>
+    );
   }
 
   // Employer & Admin Layout (Clean top-navigation layout, no left sidebar)

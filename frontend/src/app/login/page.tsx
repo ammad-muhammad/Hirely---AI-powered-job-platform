@@ -37,7 +37,9 @@ export default function LoginPage() {
   // Redirect if already logged in
   useEffect(() => {
     if (!isAuthLoading && user) {
-      if (user.role === 'admin') {
+      if (user.role === 'pending') {
+        router.push('/complete-signup');
+      } else if (user.role === 'admin') {
         router.push('/admin/dashboard');
       } else {
         router.push('/dashboard');
