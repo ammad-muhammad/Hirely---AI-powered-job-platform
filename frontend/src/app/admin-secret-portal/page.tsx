@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useEffect, useRef, Suspense } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { BrandLogo } from '@/components/navigation/BrandLogo';
 import { Button } from '@/components/ui/Button';
@@ -12,12 +12,9 @@ import gsap from 'gsap';
 
 import { getFirstAllowedAdminPage } from '@/utils/adminPermissions';
 
-const ADMIN_SECRET_KEY = process.env.NEXT_PUBLIC_ADMIN_SECRET_KEY || 'hirely-admin-secure-2026';
-
-function AdminLoginForm() {
+export default function AdminSecretPortalPage() {
   const { user, adminLogin } = useAuth();
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -25,47 +22,26 @@ function AdminLoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // Entrance authorization state
-  const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
-
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // 1. If already logged in as admin, grant immediate access
     if (user && user.role === 'admin') {
-      setIsAuthorized(true);
       const targetPage = getFirstAllowedAdminPage(user);
       router.push(targetPage);
-      return;
     }
-
-    // 2. Check secret key from URL search params or sessionStorage
-    const providedKey = searchParams.get('secret') || searchParams.get('key');
-    const storedVerification = typeof window !== 'undefined' ? sessionStorage.getItem('admin_entrance_verified') : null;
-
-    if (providedKey === ADMIN_SECRET_KEY || storedVerification === 'true') {
-      if (typeof window !== 'undefined') {
-        sessionStorage.setItem('admin_entrance_verified', 'true');
-      }
-      setIsAuthorized(true);
-    } else {
-      setIsAuthorized(false);
-    }
-  }, [user, router, searchParams]);
+  }, [user, router]);
 
   // Entrance animation respecting prefers-reduced-motion
   useEffect(() => {
-    if (isAuthorized && containerRef.current) {
-      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (!prefersReducedMotion) {
-        gsap.fromTo(
-          containerRef.current,
-          { opacity: 0, y: 12 },
-          { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' }
-        );
-      }
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (containerRef.current && !prefersReducedMotion) {
+      gsap.fromTo(
+        containerRef.current,
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' }
+      );
     }
-  }, [isAuthorized]);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,42 +57,6 @@ function AdminLoginForm() {
       setIsLoading(false);
     }
   };
-
-  // Loading state while checking security clearance
-  if (isAuthorized === null) {
-    return (
-      <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center p-4 text-xs font-semibold text-zinc-500">
-        Verifying security clearance...
-      </div>
-    );
-  }
-
-  // 404 NOT FOUND DISPLAY FOR UNAUTHORIZED VISITORS
-  if (isAuthorized === false) {
-    return (
-      <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 flex flex-col items-center justify-center p-6 text-center font-sans">
-        <div className="max-w-md w-full space-y-6">
-          <div className="space-y-2">
-            <h1 className="text-7xl font-black tracking-tighter text-zinc-300 dark:text-zinc-800">404</h1>
-            <h2 className="text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">Page Not Found</h2>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-sm mx-auto leading-relaxed font-medium">
-              The page you are looking for does not exist or has been moved to a different address.
-            </p>
-          </div>
-
-          <div className="pt-2">
-            <Link
-              href="/"
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 text-xs font-bold hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors shadow-subtle"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Back to Homepage</span>
-            </Link>
-          </div>
-        </div>
-      </main>
-    );
-  }
 
   return (
     <main className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 flex items-center justify-center p-4 sm:p-6 font-sans">
@@ -220,19 +160,5 @@ function AdminLoginForm() {
         </div>
       </div>
     </main>
-  );
-}
-
-export default function AdminLoginPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center p-4 text-xs font-semibold text-zinc-500">
-          Loading portal...
-        </div>
-      }
-    >
-      <AdminLoginForm />
-    </Suspense>
   );
 }

@@ -95,7 +95,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         if (currentUserId === data.targetUserId) {
           if (data.isRevoked || data.isSuspended) {
             logout();
-            router.push('/admin/login');
+            router.push('/admin-secret-portal');
           } else {
             refreshUser();
           }
@@ -162,7 +162,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   // Auto-redirect sub-admin to their first permitted page if visiting restricted page or dashboard without overview access
   useEffect(() => {
-    if (user && user.role === 'admin' && pathname !== '/admin/login') {
+    if (user && user.role === 'admin' && pathname !== '/admin-secret-portal') {
       if (pathname === '/admin' || pathname === '/admin/dashboard' || isAccessDenied) {
         const target = getFirstAllowedAdminPage(user);
         if (target && target !== pathname) {
@@ -172,15 +172,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }
   }, [user, pathname, isAccessDenied, router]);
 
-  // If on login page, render children directly
-  if (pathname === '/admin/login') {
+  // If on secret portal page, render children directly
+  if (pathname === '/admin-secret-portal') {
     return <>{children}</>;
   }
 
   // Auth & Admin verification
   if (!user || user.role !== 'admin') {
     if (typeof window !== 'undefined') {
-      router.push('/admin/login');
+      router.push('/admin-secret-portal');
     }
     return (
       <div className="min-h-screen bg-[#f6f7ed] dark:bg-zinc-950 flex items-center justify-center p-4 text-zinc-900 dark:text-zinc-100 text-xs font-semibold font-sans">
@@ -193,7 +193,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     setIsLoggingOut(true);
     try {
       await logout();
-      router.push('/admin/login');
+      router.push('/admin-secret-portal');
     } catch (err) {
       console.error('Admin logout error:', err);
     } finally {

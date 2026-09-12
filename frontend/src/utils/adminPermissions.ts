@@ -1,5 +1,5 @@
 export function getFirstAllowedAdminPage(user: any): string {
-  if (!user || user.role !== 'admin') return '/admin/login';
+  if (!user || user.role !== 'admin') return '/admin-secret-portal';
   if (user.isSuperAdmin === true) return '/admin/dashboard';
 
   const perms = user.adminPermissions || {};
