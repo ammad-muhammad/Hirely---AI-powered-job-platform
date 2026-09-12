@@ -25,6 +25,7 @@ import { uploadBufferToCloudinary } from '../utils/cloudinary.utils';
 
 import { extractTextFromPdfUrl } from '../utils/pdf.utils';
 import { sendSupportEmail } from '../utils/email.utils';
+import { config } from '../config/env';
 
 // In-memory cache for verification AI assessments (keyed by companyId)
 const verificationAiCache = new Map<string, { assessment: VerificationAnalysisResult; timestamp: number }>();
@@ -2241,7 +2242,7 @@ export const adminResetPassword = async (
       success: true,
       message: 'Password reset token generated.',
       resetToken,
-      resetLink: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`,
+      resetLink: `${config.frontendUrl}/reset-password?token=${resetToken}`,
     });
   } catch (error) {
     next(error);

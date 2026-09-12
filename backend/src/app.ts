@@ -20,6 +20,11 @@ configurePassport();
 export const createApp = (): Application => {
   const app = express();
 
+  // Enable trust proxy behind reverse proxies (Railway / Render / Heroku) for secure cookies & SSL
+  if (config.nodeEnv === 'production') {
+    app.set('trust proxy', 1);
+  }
+
   // Security HTTP headers
   app.use(helmet());
 
@@ -56,7 +61,10 @@ export const createApp = (): Application => {
       secret: config.jwtSecret || 'hirely_session_secret',
       resave: false,
       saveUninitialized: false,
-      cookie: { secure: config.nodeEnv === 'production' },
+      cookie: {
+        secure: config.nodeEnv === 'production',
+        sameSite: config.nodeEnv === 'production' ? 'none' : 'lax',
+      },
     })
   );
   app.use(passport.initialize());
