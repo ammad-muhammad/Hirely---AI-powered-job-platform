@@ -170,16 +170,7 @@ export default function LoginPage() {
                     {serverError && (
                       <div className="p-3 rounded-lg bg-red-50 dark:bg-red-950/60 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-xs flex items-start gap-2.5">
                         <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
-                        <div className="leading-relaxed font-medium space-y-1">
-                          <div>{serverError}</div>
-                          {serverError.includes('Admin Portal') && (
-                            <div>
-                              <Link href="/admin/login" className="inline-flex items-center font-bold text-red-800 dark:text-red-200 underline hover:text-red-950 dark:hover:text-white">
-                                Go to Admin Portal Login &rarr;
-                              </Link>
-                            </div>
-                          )}
-                        </div>
+                        <span className="leading-relaxed font-medium">{serverError}</span>
                       </div>
                     )}
 

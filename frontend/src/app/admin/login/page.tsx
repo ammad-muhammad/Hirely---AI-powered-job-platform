@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { BrandLogo } from '@/components/navigation/BrandLogo';
 import { Button } from '@/components/ui/Button';
@@ -12,9 +12,12 @@ import gsap from 'gsap';
 
 import { getFirstAllowedAdminPage } from '@/utils/adminPermissions';
 
-export default function AdminLoginPage() {
+const ADMIN_SECRET_KEY = process.env.NEXT_PUBLIC_ADMIN_SECRET_KEY || 'hirely-admin-secure-2026';
+
+function AdminLoginForm() {
   const { user, adminLogin } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -22,26 +25,47 @@ export default function AdminLoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  // Entrance authorization state
+  const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
+
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // 1. If already logged in as admin, grant immediate access
     if (user && user.role === 'admin') {
+      setIsAuthorized(true);
       const targetPage = getFirstAllowedAdminPage(user);
       router.push(targetPage);
+      return;
     }
-  }, [user, router]);
+
+    // 2. Check secret key from URL search params or sessionStorage
+    const providedKey = searchParams.get('secret') || searchParams.get('key');
+    const storedVerification = typeof window !== 'undefined' ? sessionStorage.getItem('admin_entrance_verified') : null;
+
+    if (providedKey === ADMIN_SECRET_KEY || storedVerification === 'true') {
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('admin_entrance_verified', 'true');
+      }
+      setIsAuthorized(true);
+    } else {
+      setIsAuthorized(false);
+    }
+  }, [user, router, searchParams]);
 
   // Entrance animation respecting prefers-reduced-motion
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (containerRef.current && !prefersReducedMotion) {
-      gsap.fromTo(
-        containerRef.current,
-        { opacity: 0, y: 12 },
-        { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' }
-      );
+    if (isAuthorized && containerRef.current) {
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!prefersReducedMotion) {
+        gsap.fromTo(
+          containerRef.current,
+          { opacity: 0, y: 12 },
+          { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' }
+        );
+      }
     }
-  }, []);
+  }, [isAuthorized]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,6 +82,42 @@ export default function AdminLoginPage() {
     }
   };
 
+  // Loading state while checking security clearance
+  if (isAuthorized === null) {
+    return (
+      <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center p-4 text-xs font-semibold text-zinc-500">
+        Verifying security clearance...
+      </div>
+    );
+  }
+
+  // 404 NOT FOUND DISPLAY FOR UNAUTHORIZED VISITORS
+  if (isAuthorized === false) {
+    return (
+      <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 flex flex-col items-center justify-center p-6 text-center font-sans">
+        <div className="max-w-md w-full space-y-6">
+          <div className="space-y-2">
+            <h1 className="text-7xl font-black tracking-tighter text-zinc-300 dark:text-zinc-800">404</h1>
+            <h2 className="text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">Page Not Found</h2>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-sm mx-auto leading-relaxed font-medium">
+              The page you are looking for does not exist or has been moved to a different address.
+            </p>
+          </div>
+
+          <div className="pt-2">
+            <Link
+              href="/"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 text-xs font-bold hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors shadow-subtle"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back to Homepage</span>
+            </Link>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 flex items-center justify-center p-4 sm:p-6 font-sans">
       <div ref={containerRef} className="max-w-sm w-full space-y-6">
@@ -66,12 +126,12 @@ export default function AdminLoginPage() {
           <BrandLogo size="lg" href="/" />
 
           <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-bold bg-zinc-100 dark:bg-zinc-800/80 text-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/60">
-            <ShieldCheck className="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" />
-            <span>Admin Portal</span>
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+            <span>Admin Core Portal</span>
           </div>
 
           <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">
-            Secure access to platform administration.
+            Secure clearance required for administration.
           </p>
         </div>
 
@@ -160,5 +220,19 @@ export default function AdminLoginPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function AdminLoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center p-4 text-xs font-semibold text-zinc-500">
+          Loading portal...
+        </div>
+      }
+    >
+      <AdminLoginForm />
+    </Suspense>
   );
 }

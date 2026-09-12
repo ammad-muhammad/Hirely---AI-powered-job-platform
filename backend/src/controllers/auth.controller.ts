@@ -71,9 +71,9 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
     }
 
     if (user.role === 'admin') {
-      res.status(403).json({
+      res.status(401).json({
         success: false,
-        message: 'Administrator and Sub-Admin accounts must log in via the official Admin Portal (/admin/login).',
+        message: 'Invalid email or password. Please check your credentials.',
       });
       return;
     }
