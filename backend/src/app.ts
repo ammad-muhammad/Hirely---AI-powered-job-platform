@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
+import MongoStore from 'connect-mongo';
 import passport from 'passport';
 import { config } from './config/env';
 import { checkDbConnection } from './config/database';
@@ -66,12 +67,17 @@ export const createApp = (): Application => {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
-  // Session & Passport authentication middleware
+  // Session & Passport authentication middleware using MongoDB session store
   app.use(
     session({
       secret: config.jwtSecret || 'hirely_session_secret',
       resave: false,
       saveUninitialized: false,
+      store: MongoStore.create({
+        mongoUrl: config.mongodbUri,
+        collectionName: 'sessions',
+        ttl: 14 * 24 * 60 * 60, // 14 days TTL
+      }),
       cookie: {
         secure: config.nodeEnv === 'production',
         sameSite: 'lax',
