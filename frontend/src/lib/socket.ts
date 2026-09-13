@@ -23,7 +23,11 @@ export const getSocket = async (): Promise<Socket | null> => {
       return socket;
     }
 
-    const socketUrl = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
+    const socketUrl =
+      process.env.NEXT_PUBLIC_SOCKET_URL ||
+      (process.env.NEXT_PUBLIC_API_URL && process.env.NEXT_PUBLIC_API_URL.startsWith('http')
+        ? process.env.NEXT_PUBLIC_API_URL.replace(/\/api\/?$/, '')
+        : 'https://hirely-ai-powered-job-platform-production.up.railway.app');
 
     socket = io(socketUrl, {
       auth: token ? { token } : {},

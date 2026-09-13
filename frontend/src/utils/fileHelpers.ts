@@ -2,7 +2,7 @@
  * Helper utility to handle Resume viewing and downloading cleanly across browsers
  */
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 
 function normalizeCloudinaryUrl(url: string | undefined): string {
   if (!url) return '';

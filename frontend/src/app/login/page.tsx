@@ -249,7 +249,7 @@ export default function LoginPage() {
                       variant="outline"
                       className="w-full py-2.5 text-sm font-semibold flex items-center justify-center gap-2 border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
                       onClick={() => {
-                        const backendUrl = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api').trim().replace(/\/+$/, '');
+                        const backendUrl = (process.env.NEXT_PUBLIC_API_URL || '/api').trim().replace(/\/+$/, '');
                         window.location.href = `${backendUrl}/auth/google`;
                       }}
                     >

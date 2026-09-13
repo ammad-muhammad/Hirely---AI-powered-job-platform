@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import { User, JobSeekerProfile, Company, IUser } from '../models';
 import { generateToken, JwtPayload } from '../utils/jwt.utils';
+import { AppError } from '../utils/errors';
 
 export interface SignupInput {
   email: string;
@@ -33,22 +34,25 @@ export const signupService = async (input: SignupInput): Promise<AuthResponse> =
   const { PlatformConfig } = await import('../models/PlatformConfig');
   const config = await PlatformConfig.findOne();
   if (config && config.signupsEnabled === false) {
-    throw new Error('New user registrations are temporarily disabled for platform maintenance.');
+    throw new AppError('New user registrations are temporarily disabled for platform maintenance.', 403);
   }
 
   const normalizedEmail = input.email.trim().toLowerCase();
 
   const existingUser = await User.findOne({ email: normalizedEmail });
   if (existingUser) {
-    throw new Error('Email address is already registered. Please sign in instead.');
+    throw new AppError('An account with this email address is already registered. Please sign in or use a different email.', 409);
   }
 
   // Hash password
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(input.password, salt);
 
-  const { deriveCountryFromIPOrLocation } = await import('../utils/geolocation.utils');
-  const derivedCountry = deriveCountryFromIPOrLocation(input.ipAddress);
+  let derivedCountry = null;
+  try {
+    const { deriveCountryFromIPOrLocation } = await import('../utils/geolocation.utils');
+    derivedCountry = deriveCountryFromIPOrLocation(input.ipAddress);
+  } catch {}
 
   // Create User
   const user: IUser = await User.create({
@@ -61,16 +65,21 @@ export const signupService = async (input: SignupInput): Promise<AuthResponse> =
   });
 
   // Create initial role-specific document
-  if (input.role === 'job_seeker') {
-    await JobSeekerProfile.create({ userId: user._id });
-  } else if (input.role === 'employer') {
-    await Company.create({
-      ownerId: user._id,
-      companyName: `${user.fullName}'s Company`,
-      industry: 'General',
-      companySize: '1-10',
-      location: user.location || 'Remote',
-    });
+  try {
+    if (input.role === 'job_seeker') {
+      await JobSeekerProfile.create({ userId: user._id });
+    } else if (input.role === 'employer') {
+      await Company.create({
+        ownerId: user._id,
+        companyName: `${user.fullName}'s Company`,
+        industry: 'General',
+        companySize: '1-10',
+        location: user.location || 'Remote',
+      });
+    }
+  } catch (profileErr: any) {
+    // Non-fatal error during profile creation fallback
+    console.warn('[Signup Profile Setup Warning]:', profileErr?.message || profileErr);
   }
 
   // Notify admins of new user signup
@@ -112,21 +121,21 @@ export const loginService = async (input: LoginInput): Promise<AuthResponse> => 
 
   const user = await User.findOne({ email: normalizedEmail }).select('+password');
   if (!user || !user.password) {
-    throw new Error('Invalid email or password. Please check your credentials.');
+    throw new AppError('Invalid email or password. Please check your credentials.', 401);
   }
 
   const isPasswordMatch = await bcrypt.compare(input.password, user.password);
   if (!isPasswordMatch) {
-    throw new Error('Invalid email or password. Please check your credentials.');
+    throw new AppError('Invalid email or password. Please check your credentials.', 401);
   }
 
   // Reject admin accounts from logging in via standard user login
   if (user.role === 'admin') {
-    throw new Error('Invalid email or password. Please check your credentials.');
+    throw new AppError('Invalid email or password. Please check your credentials.', 401);
   }
 
   if (user.isSuspended) {
-    throw new Error('Your account has been suspended by an administrator. Please contact support.');
+    throw new AppError('Your account has been suspended by an administrator. Please contact support.', 403);
   }
 
   const payload: JwtPayload = {
@@ -154,7 +163,7 @@ export const loginService = async (input: LoginInput): Promise<AuthResponse> => 
 export const getMeService = async (userId: string) => {
   const user = await User.findById(userId);
   if (!user) {
-    throw new Error('User not found');
+    throw new AppError('User account not found.', 404);
   }
 
   let roleProfile = null;

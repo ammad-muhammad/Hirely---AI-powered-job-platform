@@ -7,6 +7,8 @@ export const signup = async (req: Request, res: Response, next: NextFunction): P
   try {
     const { email, password, fullName, role } = req.body;
 
+    logger.info(`[Signup Request]: Attempting registration for email="${email?.trim()?.toLowerCase()}", role="${role}"`);
+
     if (!email || !password || !fullName || !role) {
       res.status(400).json({
         success: false,
@@ -34,12 +36,15 @@ export const signup = async (req: Request, res: Response, next: NextFunction): P
     // Set httpOnly JWT cookie
     sendTokenCookie(res, token);
 
+    logger.info(`[Signup Success]: Account created for user="${user.id}" (${user.email})`);
+
     res.status(201).json({
       success: true,
       message: 'Account created successfully',
       data: user,
     });
-  } catch (error) {
+  } catch (error: any) {
+    logger.error(`[Signup Controller Exception]: ${error?.message || error}`, { stack: error?.stack });
     next(error);
   }
 };

@@ -20,21 +20,32 @@ configurePassport();
 export const createApp = (): Application => {
   const app = express();
 
-  // Enable trust proxy behind reverse proxies (Railway / Render / Heroku) for secure cookies & SSL
-  if (config.nodeEnv === 'production') {
-    app.set('trust proxy', 1);
-  }
+  // Enable trust proxy behind reverse proxies (Vercel / Railway / Render)
+  app.set('trust proxy', 1);
 
   // Security HTTP headers
   app.use(helmet());
 
-  // CORS configuration (withCredentials enabled for httpOnly cookies)
+  // CORS configuration (supporting both proxied and direct cross-domain requests)
+  const allowedOrigins = [
+    config.frontendUrl,
+    'http://localhost:3000',
+    'https://hirely-ai-powered-job-platform.vercel.app',
+  ];
+
   app.use(
     cors({
-      origin: config.frontendUrl,
+      origin: (origin, callback) => {
+        if (!origin) return callback(null, true);
+        const isAllowed = allowedOrigins.some(
+          (allowed) => allowed && (origin === allowed || origin.endsWith('.vercel.app'))
+        );
+        if (isAllowed) return callback(null, true);
+        return callback(null, true);
+      },
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-      allowedHeaders: ['Content-Type', 'Authorization'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
     })
   );
 
@@ -63,7 +74,7 @@ export const createApp = (): Application => {
       saveUninitialized: false,
       cookie: {
         secure: config.nodeEnv === 'production',
-        sameSite: config.nodeEnv === 'production' ? 'none' : 'lax',
+        sameSite: 'lax',
       },
     })
   );
